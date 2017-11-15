@@ -1,4 +1,5 @@
-eqfeed_callback({
+eqfeed_callback(
+{
   "type": "FeatureCollection",
   "features": [
     {
@@ -11494,4 +11495,4 @@ eqfeed_callback({
       }
     }
   ]
-}),
+});
