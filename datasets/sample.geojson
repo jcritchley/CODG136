@@ -3,8 +3,7 @@
     { "type": "Feature",
       "geometry": {"type": "Point", "coordinates": [102.0, 0.5]},
       "properties": {
-      "prop0": "value0",
-      "type": "This is a point feature."
+      "info": "This is a point feature."
       }
       },
     { "type": "Feature",
@@ -15,8 +14,7 @@
           ]
         },
       "properties": {
-        "prop0": "value0",
-        "prop1": 0.0
+      "info": "This is a line feature."
         }
       },
     { "type": "Feature",
@@ -29,8 +27,7 @@
 
        },
        "properties": {
-         "prop0": "value0",
-         "prop1": {"this": "that"}
+      "info": "This is a area feature."
          }
        }
     ]
