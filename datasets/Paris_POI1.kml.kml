@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Paris Places of Interest</name>
+	<Style id="placemark-green">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<ListStyle>
+		</ListStyle>
+	</Style>
+	<Style id="placemark-green0">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<ListStyle>
+		</ListStyle>
+	</Style>
+	<StyleMap id="placemark-green1">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#placemark-green</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#placemark-green0</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark>
+		<name>Arc de Triomphe de l&apos;Étoile</name>
+		<description>The Arc de Triomphe exudes grandeur and offers a central view of the city Métro/RER Charles de Gaulle-Etoile(1, 2, 6, A)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.294995,48.873771,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Catacombs</name>
+		<description>Used to store the exhumed bones from the overflowing Paris cemetery. (There is a limit to the number of visitors allowed within the Catacombs at one time (200 persons). So, if you arrive just after opening, you must wait until someone exits, approximately 45–60 minutes, before anyone is admitted). Métro Denfert-Rochereau (4, 6, B)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.332379,48.83381799999999,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Château de Versailles</name>
+		<description>Must be seen. France&apos;s most exquisite chateau, on the outskirts of the city, easily visited by train. Once the home to Louis XVI and Marie Antoinette.</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.120355,48.804851,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Eiffel Tower</name>
+		<description>No other monument better symbolizes Paris. Métro Bir-Hakeim (6) or RER Champ de Mars-Tour Eiffel (C)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.294471,48.858356,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Notre Dame Cathedral</name>
+		<description>Impressive Gothic cathedral that was the inspiration for Victor Hugo&apos;s novel The Hunchback of Notre Dame. Climb to the top! Métro Cité (4) or RER Saint-Michel-Notre Dame (B, C)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.349934,48.85296799999999,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Opera Garnier</name>
+		<description>Masterpiece of theatre architecture of the 19th century built by Charles Garnier and inaugurated in 1875 housing the Paris Opera since it was founded by Louis XIV. Métro Opéra (3, 7, 8)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.331634,48.87195599999999,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Pantheon</name>
+		<description>Underneath, the final resting place for the great heroes of the French Republic including Voltaire, Victor Hugo, and Marie Curie; above, a marvellous view of the city. MétroCardinal Lemoine (10) or RER Luxembourg (B)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.346435,48.846222,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Père-Lachaise Cemetery</name>
+		<description>Unlike any cemetery in the world. Ornate grave stones, monuments set among tree lined lanes. See the graves of Jim Morrison, Oscar Wilde, and Frédéric Chopin, among many others. Métro Père Lachaise (2, 3)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.393333,48.861391,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>The Louvre</name>
+		<description>One of the finest museums in the world of art and culture. Home of the Mona Lisa and innumerable others. Enormous building and collection, plan at least two visits. Métro Palais Royal-Musée du Louvre (1, 7)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.337644,48.86059700000001,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Picasso Museum</name>
+		<description>Contains the master&apos;s own collection. Métro Saint-Paul (1) or Chemin Vert (8)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.180861,41.3852,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Cité des Sciences et de l’Industrie - La Villette</name>
+		<description>Science museum primarily for children. Métro Porte de la Villette</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.3879,48.895588,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Jardin du Luxembourg</name>
+		<description>It would be counted as a travesty not to take your under 10 year old to the Jardin du Luxembourg, long a favourite with Parisian children. With its world famous merry-go-round, a pond for sail boats, a puppet theater, pony rides, chess players, children&apos;s playground, it has something for every kid (with comfortable chairs for weary parents thrown in!). The marionettes du Luxembourg, the puppet theatre, stages classic French puppet shows in French but should be easy to understand. There are numerous places for a snack. RER Luxembourg (B) or Métro Odéon (4, 10)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.337107,48.846335,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Parc Zoologique</name>
+		<description>This zoo is different because of a 236 foot artificial mountain bang in its center. Take elevators to the top and enjoy the view or watch the mountain goats do their stuff on the sides. Lions, tigers, and everything designed to delight kids can be found in the zoo if the mountain doesn&apos;t do it for your kids. RER/Métro Gare d&apos;Austerlitz (5, 10, C)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.417725,48.832391,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Cité des enfants</name>
+		<description>A museum for kids within the Cité des Sciences et de l&apos;Industrie, is interactive, fun, and educational. There are two separate sections for the 3-5 set and the 5-12 set. The tots section has simple exhibits designed to be pushed, prodded, and poked. The section for older kids is more sophisticated with scientific experiments and TV studios. Métro Porte de la Villete</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.388011,48.896025,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Musée d&apos;Orsay</name>
+		<description>Incredible collection housed in a former railway station. Works by the great artists of the 19th century (1848-1914) including Monet&apos;s &quot;Blue Water Lilies, Renoir&apos;s &quot;Bal du moulin de la Galette&quot;, van Gogh&apos;s &quot;Bedroom in Arles&quot;, Whistler&apos;s &quot;The Artists Mother&quot;, etc. RER Musée d&apos;Orsay (C) or MétroSolférino (12)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.326604,48.859947,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Rodin Museum</name>
+		<description>His personal collection and archives, in a charming home with garden. Métro Varenne (13)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.315835,48.85529300000001,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Grande Arche de la Défense</name>
+		<description>A modern office-building variant of the Arc de Triomphe. Métro/RER La Défense (1, A)</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.236091,48.892591,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Champs-Élysées</name>
+		<description>A boulevard known for its theatres, cafés and luxury shops, and for the military parade that takes place each year on the avenue on 14 July to celebrate Bastille Day. The name is French for the Elysian Fields, the paradise for dead heroes in Greek mythology. The French proudly nickname this world-famous avenue &quot;la plus belle avenue du monde&quot; (&quot;the world&apos;s most beautiful avenue&quot;).</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.308302,48.86955499999999,0</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark>
+		<name>Disneyland Paris</name>
+		<description>The Disneyland Paris, originally Euro Disney Resort, is an entertainment resort in Marne-la-Vallée, a new town located 32 km (20 mi) east of thecentre of Paris, and is the most visited theme park in all of France and Europe.[1] It is owned and operated by Euro Disney S.C.A., a publicly tradedcompany in which The Walt Disney Company owns a majority stake.[2] The resort covers 4,800 acres (19 km2)[3] and encompasses two theme parks, several resort hotels, a shopping, dining, and entertainment complex, and a golf course, in addition to several additional recreational and entertainment venues. Disneyland Park is the original theme park of the complex, opening with the resort on 12 April 1992. A second theme park, Walt Disney Studios Park, opened in 2002. The resort is the second Disney park to open outside the United States, following the opening of the Tokyo Disney Resort in 1983.</description>
+		<styleUrl>#placemark-green1</styleUrl>
+		<Point>
+			<coordinates>2.775797,48.872248,0</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>
