@@ -11,12 +11,12 @@
  
 
 <!--Link to Leaflet CSS document-->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
 <!--Link to Leaflet JS API-->
-<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
 
 <!-- Link to jQuery Toolkit-->
-<script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     
 <!--Styling document elements, declaring the map to fill the entire page-->
 <style type="text/css">
@@ -72,9 +72,10 @@ var mymap = L.map('mapid').setView([37.8, -96], 4);
  
 
 // This example uses custom tiles taken from https://leaflet-extras.github.io/leaflet-providers/preview/
-L.tileLayer('http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}', {
-maxZoom: 18,
-attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+subdomains: 'abcd',
+maxZoom: 19
 }).addTo(mymap);
 
 // control that shows state info on hover
