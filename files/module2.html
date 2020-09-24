@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <!--title-->
+    <title>Leaflet Quick Start Guide Example</title>
+    <!--Link to Leaflet CSS document-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <!--Link to Leaflet JS API-->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        
+    <!--Styling document elements, declaring the map to fill the entire page-->
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #mapid { width: 100%; height: 100%}
+    </style>
+  </head>
+
+  <body>
+    <!--Declare map div container to place the map inside on the page-->
+    <div id="mapid"></div>
+
+    <!--Javascript map functions-->
+    <script>
+      
+      var mymap = L.map('mapid').setView([43.657999,-79.379139], 13);
+       
+      // This example uses custom tiles taken from https://leaflet-extras.github.io/leaflet-providers/preview/
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(mymap);
+       
+      // This example displays a marker at the center of Toronto.
+      // When the user clicks the marker, an info window opens that displays Toronto in bolded text.
+      L.marker([43.657999,-79.379139]).addTo(mymap)
+      .bindPopup("<b>Toronto</b>").openPopup();
+    
+    </script>
+  </body>
+</html>
