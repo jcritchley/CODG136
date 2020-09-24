@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>
+      First Google Maps Example
+    </title>
+
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        height: 100%;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <div id="map">
+    </div>
+
+    <script>
+      // This example displays a marker at the center of Toronto.
+      // When the user clicks the marker, an info window opens.
+
+      function initMap() {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 43.657999, lng: -79.379139},
+          zoom: 11
+        });
+
+        // Contents of the info window/popup
+
+        var contentString =       
+            '<p id="content">'+
+            '<p id="siteNotice">'+
+            '</p>'+
+            '<h3>Toronto</h3>'+
+            '</p>';
+
+        // Declaring the info window as a map object
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        // Declaring the marker as a map object and behaviour when user clicks on the marker (info window opens)
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(43.657999, -79.379139),
+          map: map,
+          title: 'Toronto'
+        });
+
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+
+      };
+    </script>
+    <!-- Linking to the Google Maps API -->
+    <script async="" defer="" src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+    </script> 
+  </body>
+</html>
