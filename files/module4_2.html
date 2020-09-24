@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Data Layer: Simple</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #mapDiv {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mapDiv"></div>
+    <script>
+
+      var map;
+      function initMap() {
+
+      var infowindow = new google.maps.InfoWindow();
+
+        map = new google.maps.Map(document.getElementById('mapDiv'), {
+          zoom: 8,
+          center: {lat: 0.5, lng: 102}
+        });
+
+        // When the user clicks on a marker, line or area open an infowindow
+        map.data.addListener('click', function (event) {
+            var myHTML = event.feature.getProperty("info");
+            infowindow.setContent("<div style='width:150px; text-align: center;'>" + myHTML + "</div>");
+            infowindow.setPosition(event.latLng);
+            infowindow.setOptions({
+                pixelOffset: new google.maps.Size(0, -10)
+            });
+            infowindow.open(map);
+        });
+        
+        // add listener to close infowindow when clicking anywhere on map
+        google.maps.event.addListener(map, 'click', function () {
+            infowindow.close();
+        });
+
+        // NOTE: This uses cross-domain XHR, and may not work on older browsers or when attempting to view when .html file is saved locally on your computer (not hosted on a server)
+        map.data.loadGeoJson(
+
+       // Link to the GeoJSON file hosted on a server with CORS enabled
+            'https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/geojson_sample.geojson');
+      }
+    </script>
+    <script async="" defer="" src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+    </script>
+  </body>
+</html>
