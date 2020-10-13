@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Responsive Map Template</title>
+    
+    <!--Link to Leaflet CSS document-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!--Link to Leaflet JS API-->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+                       
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+       
+        section {
+            position: absolute;
+            right: 10px;
+            width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            background: rgba(256, 256, 256, .8);
+            border: 1px solid grey;
+            border-radius: 3px;
+            z-index: 800;
+        }
+       
+        p {
+            font-size: .9em;
+            line-height: 1.5em;
+        }
+
+        @media screen and (max-width:768px) {
+        /* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
+            body {
+              overflow: hidden
+            }           
+
+            section {
+              width: 85%;
+              bottom:15px;
+              max-height:300px;
+              overflow: auto;
+            }
+        }       
+       
+    </style>
+</head>
+
+<body>
+
+    <div id='map'></div>
+
+    <section>
+
+        <h2>This is a container</h2>
+
+        <p><b>Additional information about the map can go here. We could also use this container to include buttons and controls to interact with the map such as toggle layer visibility.</b></p>
+
+        <p><b>Second Paragraph:</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+        <p><b>Third Paragraph:</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+    </section>
+
+    <script>
+       
+        var options = {
+            center: [43.652526, -79.382674],
+            zoom: 12
+        }
+        var map = L.map('map', options);
+       
+        // Loading the OpenStreetMap.HOT tiles from https://leaflet-extras.github.io/leaflet-providers/preview/
+        var tiles = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+        }).addTo(map);
+
+        // Creating a marker using the map center to place it and opening the callout when the map loads
+        var message = 'Toronto!';
+        L.marker(map.getCenter())
+            .bindTooltip(message)
+            .addTo(map)
+            .openTooltip();
+       
+    </script>
+
+</body>
+
+</html>
