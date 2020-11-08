@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset=utf-8 />
+
+<title>Google Slider Example</title>
+
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+<!--linking to jQuery and jQuery UI libraries and jQuery UI CSS stylesheet -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<style>
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+    }
+
+    #slider {
+        width:100%;
+    }
+
+    section {
+        position: absolute;
+        right: 10px;
+        width: 800px;
+        margin: 20px auto;
+        padding: 0 15px;
+        background: rgba(256, 256, 256, .8);
+        border: 1px solid grey;
+        border-radius: 3px;
+        z-index: 800;
+    }
+
+    p {
+        font-size: .9em;
+        line-height: 1.5em;
+    }
+
+    @media screen and (max-width:768px) {
+
+        /* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
+        body {
+            overflow: hidden
+        }
+
+        section {
+            width: 85%;
+            bottom:15px;
+            max-height:300px;
+            overflow: auto;
+        }
+    }
+
+</style>
+
+</head>
+
+<body>
+    <div id='map'></div>
+
+    <section>
+    <h2>Population Density Grid, 2015</h2>
+
+    <p>WMS layer diplays Global Population Density adjusted to 2015, from <a href="http://sedac.ciesin.columbia.edu/maps/services#Gridded Population of the World">Socioeconomic Data and Applications Centre (SEDAC)</a></p>
+
+    <!-- slider-->
+    <div id="slider" >
+        <div class="ui-slider-handle"></div>
+    </div>
+
+    <p>Use the slider to adjust the population density opacity.</p>
+
+    </section>
+
+    <script>
+        function initMap() {
+
+            var myMap = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 43.652526, lng: -79.382674},
+                zoom: 3
+            });
+
+            var EXTENT = [-Math.PI * 6378137, Math.PI * 6378137];
+
+            function xyzToBounds(x, y, z) {
+                var tileSize = (EXTENT[1] * 2) / Math.pow(2, z);
+                var minx = EXTENT[0] + x * tileSize;
+                var maxx = EXTENT[0] + (x + 1) * tileSize;
+                // remember y origin starts at top
+                var miny = EXTENT[1] - (y + 1) * tileSize;
+                var maxy = EXTENT[1] - y * tileSize;
+                return [minx, miny, maxx, maxy];
+            }
+
+            var getTileUrl = function(coordinates, zoom) {
+                return (
+                "http://sedac.ciesin.columbia.edu/geoserver/gwc/service/wms?" +
+                "&REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1" +
+                "&LAYERS=gpw-v4:gpw-v4-population-density-adjusted-to-2015-unwpp-country-totals-rev11_2020" +
+                "&FORMAT=image/png" +
+                "&SRS=EPSG:3857&WIDTH=256&HEIGHT=256" +
+                "&BBOX=" +
+                xyzToBounds(coordinates.x, coordinates.y, zoom).join(",")
+                );
+            };
+
+            var landcover = new google.maps.ImageMapType({
+                getTileUrl: getTileUrl,
+                minZoom: 0,
+                maxZoom: 19,
+                opacity: 0.5
+            });
+            myMap.overlayMapTypes.push(landcover);
+
+            //jQuery slider code identifying the div to place the slider and the default slider value of 50 for 50% opacity
+
+            $("#slider").slider({
+                    value: 50,
+                    slide: function(e, ui)
+                {
+                    landcover.setOpacity(ui.value / 100);
+                }
+            });
+        }
+
+    </script>
+
+    <!-- Linking to the Google Maps API -->
+    <script async="" defer="" src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+</body>
+</html>
