@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset=utf-8 />
+<title>Responsive Map Template</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+<!--Link to Leaflet CSS document-->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+<!--Link to Leaflet JS API-->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<!-- Link to jQuery Toolkit-->
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 1
+  }
+
+  section {
+    position: absolute;
+    right: 10px;
+    width: 600px;
+    margin: 20px auto;
+    padding: 0 15px;
+    background: rgba(256, 256, 256, .8);
+    border: 1px solid grey;
+    border-radius: 3px;
+    z-index: 2;
+  }
+
+  p {
+    font-size: .9em;
+    line-height: 1.5em;
+  }
+
+  @media screen and (max-width:768px) {
+    /* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
+    body {
+      overflow: hidden
+    }
+
+    section {
+      width: 85%;
+      bottom:15px;
+      max-height:300px;
+      overflow: auto;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+
+  <div id='map'></div>
+
+  <section>
+
+  <h2><p id="title"></p></h2>
+
+  <p id="description"></p>
+
+  </section>
+
+  <script>
+
+    document.getElementById("title").innerHTML = "Hover over a marker to learn more";
+    document.getElementById("description").innerHTML = null;
+
+    var options = {
+      center: [43.652526, -79.382674],
+      zoom: 12
+    }
+    var mayMap = L.map('map', options);
+
+    // Loading the OpenStreetMap.HOT tiles from https://leaflet-extras.github.io/leaflet-providers/preview/
+    var tiles = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+    }).addTo(mayMap);
+
+    // declaring an empty GeoJSON FeatureCollection
+    var tempJson = {
+      "type": "FeatureCollection",
+      "features": []
+    }
+
+    // This loads the jsonArr GeoJSON map data file
+    // jQuery getJSON() method - http://api.jquery.com/jquery.getjson/
+    $.getJSON('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/toronto_planning_studies.json', function(json) {
+
+    // accessing the json object markers key
+    // markers is an array of objects so we can iterate over it and perform an action for each object inside the markers array
+    for (var marker of json.markers){
+      var tempMarker = {
+        "type": "Feature",
+        "properties": {
+        "title": marker.title,
+        "description": marker.description,
+        "link": marker.link,
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          marker.lng,
+          marker.lat
+      ]
+      }
+    };
+    // add tempMarker GeoJson point to the tempJson FeatureCollection
+    tempJson.features.push(tempMarker);
+    }
+
+    // creating a geojson map layer
+
+    var exampleLayer = L.geoJson(tempJson).addTo(mayMap);
+
+    // adding a mouseover event to the geojson layer to update the overlay with data extracted from the specific feature that the mouse is over
+
+    exampleLayer.on('mouseover', function(event){
+      document.getElementById("title").innerHTML = event.layer.feature.properties.title;
+      document.getElementById("description").innerHTML = event.layer.feature.properties.description;
+    });
+
+    // adding a mouseout event to the geojson layer to reset the overlay contents
+
+    exampleLayer.on('mouseout', function(event){
+      document.getElementById("title").innerHTML = "Hover over a marker to learn more";
+      document.getElementById("description").innerHTML = null;
+    });
+
+    });
+
+  </script>
+
+</body>
+
+</html>

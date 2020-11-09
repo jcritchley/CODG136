@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset=utf-8 />
+<title>Responsive Map Template</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+<!--Link to Leaflet CSS document-->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+<!--Link to Leaflet JS API-->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<!-- Link to jQuery Toolkit-->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+  }
+
+  #title {
+    margin: 0;
+  }
+
+  #description {
+    font-size: .9em;
+    line-height: 1.5em;
+    margin: 0;
+  }
+
+  @media screen and (max-width:768px) {
+    
+    /* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
+    body {
+      overflow: hidden
+    }
+
+    section {
+      width: 85%;
+      bottom:15px;
+      max-height:300px;
+      overflow: auto;
+    }
+
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<div id='map'></div>
+
+  <script>
+
+    var options = {
+      center: [43.652526, -79.382674],
+      zoom: 12
+    }
+    var mayMap = L.map('map', options);
+
+    // Loading the OpenStreetMap.HOT tiles from https://leaflet-extras.github.io/leaflet-providers/preview/
+    var tiles = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
+    }).addTo(mayMap);
+
+    // declaring an empty GeoJSON FeatureCollection
+    var tempJson = {
+      "type": "FeatureCollection",
+      "features": []
+    }
+
+    // When the user clicks on a marker, line or area open an infowindow
+    function onEachFeature(feature, layer) {
+    console.log(feature.properties.title);
+
+    var popupContent = "<h3 id='title'>" + feature.properties.title + "</h3><br/><p id='description'>" + feature.properties.description + "</p>";
+
+    layer.bindPopup(popupContent);
+    }
+
+    // This loads the jsonArr GeoJSON map data file
+    // jQuery getJSON() method - http://api.jquery.com/jquery.getjson/
+    $.getJSON('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/toronto_planning_studies.json', function(json) {
+
+      // accessing the json object markers key
+      // markers is an array of objects so we can iterate over it and perform an action for each object inside the markers array
+      for (const marker of json.markers){
+        var tempMarker = {
+          "type": "Feature",
+          "properties": {
+            "title": marker.title,
+            "description": marker.description,
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              marker.lng,
+              marker.lat
+            ]
+          }
+        };
+        // add tempMarker GeoJson point to the tempJson FeatureCollection
+        tempJson.features.push(tempMarker);
+      }
+
+      var exampleLayer = L.geoJson(tempJson, {
+      // a function that gets called on each feature before adding it to a GeoJSON layer. A common reason to use this option is to attach a popup to features when they are clicked.
+      onEachFeature: onEachFeature
+      // add example GeoJSON layer to the map
+      }).addTo(mayMap);
+
+    });
+
+  </script>
+
+</body>
+
+</html>
