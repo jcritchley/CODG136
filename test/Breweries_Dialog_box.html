@@ -1,0 +1,174 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Ontario Breweries Map - Assignment 3</title>
+   <!--Jquery -->
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <!--Esri API  -->
+        <link rel="stylesheet" href="https://js.arcgis.com/4.21/esri/themes/light/main.css">
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="dialog-ui.css">
+
+  
+  <style>
+    /*google fonts*/
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');
+</style>
+  <style>
+
+    html, body, #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+/*Styling for Ontario Breweries container*/
+    
+.ui-dialog-titlebar {
+    display: none;
+}      
+        h2 {
+          font-size: 5em;
+      font-family: 'Special Elite', cursive;
+
+    }
+        p {
+            font-size: .9em;
+            line-height: 1.5em;
+           font-family: 'Roboto Slab', serif;
+        }
+      p1 {
+            font-size: 1.5em;
+            line-height: 1.5em;
+           font-family: 'Special Elite', cursive;
+        }
+
+        @media screen and (max-width:768px) {
+        /* Media Screen Response */
+            body {
+              overflow: hidden
+            }           
+
+            section {
+              width: 85%;
+              bottom:15px;
+              max-height:300px;
+              overflow: auto;
+            }
+        }    
+  </style>
+  <script src="https://js.arcgis.com/4.21/"></script>
+
+  <script>
+  require([
+    "esri/config",
+    "esri/Map",
+    "esri/views/MapView",
+
+    "esri/layers/FeatureLayer",
+    "esri/widgets/Locate",
+
+  ], function(esriConfig,Map, MapView, FeatureLayer, Locate) {
+
+  esriConfig.apiKey = "AAPK04f078b74d1d4937a3a1b735a7c9e9e9UgVT-565H_eCv1CwgNb0RBrhsS1JUsHZ2PAFNuJI2b6k5-YE_bRdqxVUB29Ce1rQ";
+
+  const map = new Map({
+    basemap: "arcgis-dark-gray"
+  });
+
+  const view = new MapView({
+    container: "viewDiv",
+    map: map,
+    center: [-84.125729, 47.383071],
+    zoom: 5
+  });
+    // Add Locator
+    const locate = new Locate({
+          view: view,
+          useHeadingEnabled: false,
+          goToOverride: function(view, options) {
+            options.target.scale = 50000;
+            return view.goTo(options.target);
+          }
+        });
+        view.ui.add(locate, "top-left");
+    
+    
+     // Define a pop-up for Breweries
+      const popupBreweries = {
+        "title": "{Brewery}{USER_Brewe}",
+        "content": "{Match_addr} <br> {USER_Websi}"
+      }
+    
+//Breweries Feature Layer points styling
+
+            const BreweriesRenderer = {
+         type: "simple",  // autocasts as new SimpleRenderer()
+  symbol: {
+    type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+    size: 6,
+    color: "#55d3d1",
+    outline: {  // autocasts as new SimpleLineSymbol()
+      width: 0.5,
+      color: "white"
+    }
+  }
+};
+      
+//Breweries feature layer
+  const breweriesLayer = new FeatureLayer({
+    url: "https://services7.arcgis.com/mbC97TSabuNgCnce/arcgis/rest/services/Breweries/FeatureServer",
+    outFields: ["{USER_Brewe}, {Match_addr}, {USER_Websi}"],
+    popupTemplate: popupBreweries,
+    renderer: BreweriesRenderer
+  });
+
+  map.add(breweriesLayer);
+  });
+    
+    $(function() {
+    $( "#j_dialog" ).dialog({
+      autoOpen: true,
+      modal: true,
+      width: 800,
+   
+
+      buttons: {
+        Ok: function() {
+          $( this ).dialog( "close" );
+        }
+        },
+  
+    });
+   });
+  $( ".selector" ).dialog({
+  closeOnEscape: false, 
+});
+</script>
+
+</head>
+<body>
+  
+<!--Ontario breweries text container -->
+  
+  <div id="j_dialog">
+
+
+        <h2>Ontario Breweries</h2>
+
+        <p1><b>Discover Hundereds of Ontario Craft Breweries </b></p1>
+
+        <p><b>More than a novelty</b> craft breweries are becoming the pillars of their communities again.</p>
+
+        <p><b>Find your local</b>  fresh and unique brews close to you!</p>
+
+    
+  </div>
+  
+    <div id="viewDiv"></div>
+</body>
+</html>
