@@ -2,85 +2,83 @@
 
 <html>
 <head>
- 
 
-<!--title-->
-<title>Leaflet Quick Start Guide Example</title>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
+    <!--title-->
+    <title>Leaflet Quick Start Guide Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!--Link to Leaflet CSS document-->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
-<!--Link to Leaflet JS API-->
-<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
 
-<!-- Link to jQuery Toolkit-->
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-    
-<!--Styling document elements, declaring the map to fill the entire page-->
-<style>
-html, body { 
-height: 100%; 
-margin: 0; 
-padding: 0 
-}
-#mapDiv { 
-height: 100%
-}
-</style>
+    <!--Link to Leaflet CSS document-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+    <!--Link to Leaflet JS API-->
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+
+    <!-- Link to jQuery Toolkit-->
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+    <!--Styling document elements, declaring the map to fill the entire page-->
+    <style>
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0 
+        }
+        #mapDiv { 
+            height: 100vh
+        }
+    </style>
+
 </head>
 <body>
- 
 
 <!--Declare map div container to place the map inside on the page-->
 <div id="mapDiv"></div>
- 
 
-<!--Javascript map functions-->
-<script>
-var mymap = L.map('mapDiv').setView([0.5,102], 8);
- 
+    <!--Javascript map functions-->
+    <script>
+        var mymap = L.map('mapDiv').setView([0.5,102], 8);
 
-// This example uses custom tiles taken from https://leaflet-extras.github.io/leaflet-providers/preview/
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-maxZoom: 19,
-attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(mymap);
- 
-    // When the user clicks on a marker, line or area open an infowindow
-function onEachFeature(feature, layer) {
-var popupContent = feature.properties.info;
-if (feature.properties && feature.properties.popupContent) {
-popupContent += feature.properties.popupContent;
-}
-layer.bindPopup(popupContent);
-}
+        // This example uses custom tiles taken from https://leaflet-extras.github.io/leaflet-providers/preview/
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(mymap);
 
-// declaring the layer    
-var example;
+        // When the user clicks on a marker, line or area open an infowindow
+        function onEachFeature(feature, layer) {
+        var popupContent = feature.properties.info;
+        if (feature.properties && feature.properties.popupContent) {
+        popupContent += feature.properties.popupContent;
+        }
+        layer.bindPopup(popupContent);
+        }
 
-// This loads the example GeoJSON map data file 
-// jQuery getJSON() method - http://api.jquery.com/jquery.getjson/
-$.getJSON('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/geojson_sample.geojson', function(json) {
-example = L.geoJson(json, {
+        // declaring the layer    
+        var example;
 
-// style path 
-// http://leafletjs.com/examples/geojson/
-style:{
-"color": "#1a7485",
-"weight": 1.5,
- "opacity": 0.9,
-},
+        // This loads the example GeoJSON map data file
+        fetch('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/geojson_sample.geojson', {
+            headers: {
+                'Accept': 'application/json'
+            }
+            })
+            .then(response => response.json())
+            .then(json => {
+            example = L.geoJson(json, {
+            // style path 
+            // http://leafletjs.com/examples/geojson/
+            style: {
+                "color": "#1a7485",
+                "weight": 1.5,
+                "opacity": 0.9,
+            },
+            // a function that gets called on each feature before adding it to a GeoJSON layer. A common reason to use this option is to attach a popup to features when they are clicked.
+            onEachFeature: onEachFeature
+            // add example GeoJSON layer to the map
+            }).addTo(mymap);
+        })
 
-// a function that gets called on each feature before adding it to a GeoJSON layer. A common reason to use this option is to attach a popup to features when they are clicked.
-onEachFeature: onEachFeature
-
-// add example GeoJSON layer to the map
-}).addTo(mymap);
-
-});   
-
-</script>
+    </script>
 </body>
 </html>
