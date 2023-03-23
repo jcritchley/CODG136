@@ -74,33 +74,37 @@
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
     }).addTo(mayMap);
 
-    // declaring an empty GeoJSON FeatureCollection
-    var tempJson = {
-      "type": "FeatureCollection",
-      "features": []
-    }
 
     // When the user clicks on a marker, line or area open an infowindow
     function onEachFeature(feature, layer) {
-    console.log(feature.properties.title);
-
-    var popupContent = "<h3 id='title'>" + feature.properties.title + "</h3><br/><p id='description'>" + feature.properties.description + "</p>";
-
-    layer.bindPopup(popupContent);
+      var popupContent = "<h3 id='title'>" + feature.properties.title + "</h3><br/><p id='description'>" + feature.properties.description + "</p>";
+      layer.bindPopup(popupContent);
     }
 
-    // This loads the jsonArr GeoJSON map data file
-    // jQuery getJSON() method - http://api.jquery.com/jquery.getjson/
-    $.getJSON('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/toronto_planning_studies.json', function(json) {
+    // This loads the example GeoJSON map data file using fetch API - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+    fetch('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/toronto_planning_studies.json', {
+      headers: {
+          'Accept': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(json => {
+
+      // declaring an empty GeoJSON FeatureCollection
+      var tempJson = {
+        "type": "FeatureCollection",
+        "features": []
+      }
 
       // accessing the json object markers key
       // markers is an array of objects so we can iterate over it and perform an action for each object inside the markers array
-      for (const marker of json.markers){
+      for (var marker of json.markers) {
         var tempMarker = {
           "type": "Feature",
           "properties": {
             "title": marker.title,
             "description": marker.description,
+            "link": marker.link,
           },
           "geometry": {
             "type": "Point",
@@ -112,12 +116,12 @@
         };
         // add tempMarker GeoJson point to the tempJson FeatureCollection
         tempJson.features.push(tempMarker);
-      }
-
+      };
+      
       var exampleLayer = L.geoJson(tempJson, {
-      // a function that gets called on each feature before adding it to a GeoJSON layer. A common reason to use this option is to attach a popup to features when they are clicked.
-      onEachFeature: onEachFeature
-      // add example GeoJSON layer to the map
+        // a function that gets called on each feature before adding it to a GeoJSON layer. A common reason to use this option is to attach a popup to features when they are clicked.
+        onEachFeature: onEachFeature
+        // add example GeoJSON layer to the map
       }).addTo(mayMap);
 
     });

@@ -90,55 +90,57 @@
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles courtesy of <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>'
     }).addTo(mayMap);
 
-    // declaring an empty GeoJSON FeatureCollection
-    var tempJson = {
-      "type": "FeatureCollection",
-      "features": []
-    }
-
-    // This loads the jsonArr GeoJSON map data file
-    // jQuery getJSON() method - http://api.jquery.com/jquery.getjson/
-    $.getJSON('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/toronto_planning_studies.json', function(json) {
-
-    // accessing the json object markers key
-    // markers is an array of objects so we can iterate over it and perform an action for each object inside the markers array
-    for (var marker of json.markers){
-      var tempMarker = {
-        "type": "Feature",
-        "properties": {
-        "title": marker.title,
-        "description": marker.description,
-        "link": marker.link,
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          marker.lng,
-          marker.lat
-      ]
+    // This loads the example GeoJSON map data file using fetch API - https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+    fetch('https://raw.githubusercontent.com/jcritchley/CODG136/master/datasets/toronto_planning_studies.json', {
+      headers: {
+          'Accept': 'application/json'
       }
-    };
-    // add tempMarker GeoJson point to the tempJson FeatureCollection
-    tempJson.features.push(tempMarker);
-    }
+    })
+    .then(response => response.json())
+    .then(json => {
 
-    // creating a geojson map layer
+      // declaring an empty GeoJSON FeatureCollection
+      var tempJson = {
+        "type": "FeatureCollection",
+        "features": []
+      }
 
-    var exampleLayer = L.geoJson(tempJson).addTo(mayMap);
+      // accessing the json object markers key
+      // markers is an array of objects so we can iterate over it and perform an action for each object inside the markers array
+      for (var marker of json.markers) {
+        var tempMarker = {
+          "type": "Feature",
+          "properties": {
+            "title": marker.title,
+            "description": marker.description,
+            "link": marker.link,
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              marker.lng,
+              marker.lat
+            ]
+          }
+        };
+        // add tempMarker GeoJson point to the tempJson FeatureCollection
+        tempJson.features.push(tempMarker);
+      };
+      
+      // creating a geojson map layer
+      var exampleLayer = L.geoJson(tempJson).addTo(mayMap);
+      
+      // adding a mouseover event to the geojson layer to update the overlay with data extracted from the specific feature that the mouse is over
+      exampleLayer.on('mouseover', function(event){
+        document.getElementById("title").innerHTML = event.layer.feature.properties.title;
+        document.getElementById("description").innerHTML = event.layer.feature.properties.description;
+      });
 
-    // adding a mouseover event to the geojson layer to update the overlay with data extracted from the specific feature that the mouse is over
-
-    exampleLayer.on('mouseover', function(event){
-      document.getElementById("title").innerHTML = event.layer.feature.properties.title;
-      document.getElementById("description").innerHTML = event.layer.feature.properties.description;
-    });
-
-    // adding a mouseout event to the geojson layer to reset the overlay contents
-
-    exampleLayer.on('mouseout', function(event){
-      document.getElementById("title").innerHTML = "Hover over a marker to learn more";
-      document.getElementById("description").innerHTML = null;
-    });
+      // adding a mouseout event to the geojson layer to reset the overlay contents
+      exampleLayer.on('mouseout', function(event){
+        document.getElementById("title").innerHTML = "Hover over a marker to learn more";
+        document.getElementById("description").innerHTML = null;
+      });
 
     });
 
