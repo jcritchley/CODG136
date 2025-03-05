@@ -9,123 +9,122 @@
 
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 
-    <!--Link to Leaflet CSS document-->
+	<!--Link to Leaflet CSS document-->
 
-    <!--linking to Leaflet API-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+	<!--linking to Leaflet API-->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!--linking to jQuery and jQuery UI libraries and jQuery UI CSS stylesheet -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<!--linking to jQuery and jQuery UI libraries and jQuery UI CSS stylesheet -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
 
 <style>
 
-    body {
-        margin: 0;
-        padding: 0;
-    }
+	body {
+		margin: 0;
+		padding: 0;
+	}
 
-    #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-    }
+	#map {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 100%;
+	}
 
-    #slider {
-        width:100%;
-    }
+	#slider {
+		width:100%;
+	}
 
-    section {
-        position: absolute;
-        right: 10px;
-        width: 800px;
-        margin: 20px auto;
-        padding: 0 15px;
-        background: rgba(256, 256, 256, .8);
-        border: 1px solid grey;
-        border-radius: 3px;
-        z-index: 800;
-    }
+	section {
+		position: absolute;
+		right: 10px;
+		width: 800px;
+		margin: 20px auto;
+		padding: 0 15px;
+		background: rgba(256, 256, 256, .8);
+		border: 1px solid grey;
+		border-radius: 3px;
+		z-index: 800;
+	}
 
-    p {
-        font-size: .9em;
-        line-height: 1.5em;
-    }
+	p {
+		font-size: .9em;
+		line-height: 1.5em;
+	}
 
-    @media screen and (max-width:768px) {
+	@media screen and (max-width:768px) {
 
-        /* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
-        body {
-            overflow: hidden
-        }
+		/* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
+		body {
+			overflow: hidden
+		}
 
-        section {
-            width: 85%;
-            bottom:15px;
-            max-height:300px;
-            overflow: auto;
-        }
-    }
+		section {
+			width: 85%;
+			bottom:15px;
+			max-height:300px;
+			overflow: auto;
+		}
+	}
 
 </style>
 
 </head>
 
 <body>
-    <div id='map'></div>
+	<div id='map'></div>
 
-    <section>
-    <h2>Population Density Grid, 2015</h2>
+	<section>
+	<h2>City of Toronto - Orthorectified Aerial Imagery</h2>
 
-    <p>WMS layer diplays Global Population Density adjusted to 2015, from <a href="http://sedac.ciesin.columbia.edu/maps/services#Gridded Population of the World">Socioeconomic Data and Applications Centre (SEDAC)</a></p>
+	<p>WMS layer diplays Orthorectified Aerial Imagery for the City of Toronto, from <a href="https://open.toronto.ca/dataset/web-map-services/">the City of Toronto Open Data portal</a>.</p>
 
-    <!-- slider-->
-    <div id="slider" >
-        <div class="ui-slider-handle"></div>
-    </div>
+	<!-- slider-->
+	<div id="slider" >
+		<div class="ui-slider-handle"></div>
+	</div>
 
-    <p>Use the slider to adjust the population density opacity.</p>
+	<p>Use the slider to adjust the satellite imagery opacity.</p>
 
-    </section>
+	</section>
 
-    <script>
+	<script>
 
-        var map = L.map('map', {
-            center: [43.652526, -79.382674],
-            zoom: 3
-        });
-          
-        // CartoDB Positron map tiles
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(map);
+		var map = L.map('map', {
+			center: [43.652526, -79.382674],
+			zoom: 13
+		});
+		  
+		// CartoDB Positron map tiles
+		L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+			maxZoom: 19
+		}).addTo(map);
 
-        // adding wms layer
-        var pop_dens = new L.TileLayer.WMS("http://sedac.ciesin.columbia.edu/geoserver/gwc/service/wms?", 
-        {
-            layers: 'gpw-v4:gpw-v4-population-density-adjusted-to-2015-unwpp-country-totals-rev11_2020',
+		// adding wms layer
+		var satellite = new L.tileLayer.wms('https://gis.toronto.ca/arcgis/services/basemap/cot_ortho/MapServer/WMSServer', {
+            layers: '0', 
             format: 'image/png',
             transparent: true,
-            opacity: .5,
-        });
+            opacity: 0.5,
+            attribution: '&copy; City of Toronto GIS'
+        }).addTo(map);
 
-        map.addLayer(pop_dens);
+		map.addLayer(satellite);
 
-        //jQuery slider code identifying the div to place the slider and the default slider value of 50 for 50% opacity
+		//jQuery slider code identifying the div to place the slider and the default slider value of 50 for 50% opacity
 
-        $("#slider").slider({
-        value: 50,
-        slide: function(e, ui) 
-        {
-        pop_dens.setOpacity(ui.value / 100);
-        }
-        });
+		$("#slider").slider({
+		value: 50,
+		slide: function(e, ui) 
+			{
+				satellite.setOpacity(ui.value / 100);
+			}
+		});
 
-    </script>
+	</script>
 </body>
 </html>
