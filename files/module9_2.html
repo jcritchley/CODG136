@@ -73,69 +73,69 @@
     <div id='map'></div>
 
     <section>
-    <h2>Population Density Grid, 2015</h2>
+    <h2>National Landcover Database, 2016</h2>
 
-    <p>WMS layer diplays Global Population Density adjusted to 2015, from <a href="http://sedac.ciesin.columbia.edu/maps/services#Gridded Population of the World">Socioeconomic Data and Applications Centre (SEDAC)</a></p>
+    <p>WMS layer diplays National Land Cover Database, from <a href="https://www.mrlc.gov/data-services-page">Multi-Resolution Land Characteristics (MRLC) Consortium
+</a></p>
 
     <!-- slider-->
     <div id="slider" >
         <div class="ui-slider-handle"></div>
     </div>
 
-    <p>Use the slider to adjust the population density opacity.</p>
+    <p>Use the slider to adjust the landcover opacity.</p>
 
     </section>
 
     <script>
-        function initMap() {
+      var EXTENT = [-Math.PI * 6378137, Math.PI * 6378137];
 
-            var myMap = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 43.652526, lng: -79.382674},
-                zoom: 3
-            });
+      function xyzToBounds(x, y, z) {
+        var tileSize = (EXTENT[1] * 2) / Math.pow(2, z);
+        var minx = EXTENT[0] + x * tileSize;
+        var maxx = EXTENT[0] + (x + 1) * tileSize;
+        // remember y origin starts at top
+        var miny = EXTENT[1] - (y + 1) * tileSize;
+        var maxy = EXTENT[1] - y * tileSize;
+        return [minx, miny, maxx, maxy];
+      }
 
-            var EXTENT = [-Math.PI * 6378137, Math.PI * 6378137];
+      var getTileUrl = function(coordinates, zoom) {
+        return (
+          "https://www.mrlc.gov/geoserver/NLCD_Land_Cover/wms?" +
+          "&REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1" +
+          "&LAYERS=mrlc_display%3ANLCD_2016_Land_Cover_L48" +
+          "&FORMAT=image%2Fpng" +
+          "&SRS=EPSG:3857&WIDTH=256&HEIGHT=256" +
+          "&BBOX=" +
+          xyzToBounds(coordinates.x, coordinates.y, zoom).join(",")
+        );
+      };
 
-            function xyzToBounds(x, y, z) {
-                var tileSize = (EXTENT[1] * 2) / Math.pow(2, z);
-                var minx = EXTENT[0] + x * tileSize;
-                var maxx = EXTENT[0] + (x + 1) * tileSize;
-                // remember y origin starts at top
-                var miny = EXTENT[1] - (y + 1) * tileSize;
-                var maxy = EXTENT[1] - y * tileSize;
-                return [minx, miny, maxx, maxy];
-            }
+      function initMap() {
+      
+        var map = new google.maps.Map(document.getElementById("map"), {
+          center: {lat: 43.652526, lng: -79.382674},
+          zoom: 3
+        });
 
-            var getTileUrl = function(coordinates, zoom) {
-                return (
-                "http://sedac.ciesin.columbia.edu/geoserver/gwc/service/wms?" +
-                "&REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1" +
-                "&LAYERS=gpw-v4:gpw-v4-population-density-adjusted-to-2015-unwpp-country-totals-rev11_2020" +
-                "&FORMAT=image/png" +
-                "&SRS=EPSG:3857&WIDTH=256&HEIGHT=256" +
-                "&BBOX=" +
-                xyzToBounds(coordinates.x, coordinates.y, zoom).join(",")
-                );
-            };
-
-            var landcover = new google.maps.ImageMapType({
-                getTileUrl: getTileUrl,
-                minZoom: 0,
-                maxZoom: 19,
-                opacity: 0.5
-            });
-            myMap.overlayMapTypes.push(landcover);
-
-            //jQuery slider code identifying the div to place the slider and the default slider value of 50 for 50% opacity
-
-            $("#slider").slider({
-                    value: 50,
-                    slide: function(e, ui)
-                {
-                    landcover.setOpacity(ui.value / 100);
-                }
-            });
-        }
+        var landcover = new google.maps.ImageMapType({
+          getTileUrl: getTileUrl,
+          name: "Landcover",
+          alt: "National Land Cover Database 2016",
+          minZoom: 0,
+          maxZoom: 19,
+          opacity: 0.5,
+        });
+        map.overlayMapTypes.push(landcover);
+        $("#slider").slider({
+          value: 50,
+          slide: function(e, ui)
+          {
+            landcover.setOpacity(ui.value / 100);
+          }
+        });
+      }
 
     </script>
 
