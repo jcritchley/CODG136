@@ -28,10 +28,10 @@
       var mymap = L.map('mapid').setView([43.657999,-79.379139], 13);
        
       // This example uses custom tiles taken from https://leaflet-extras.github.io/leaflet-providers/preview/
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(mymap);
+      L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/">HUMANITARIAN TEAM</a>'
+}).addTo(mymap);
        
       // This example displays a marker at the center of Toronto.
       // When the user clicks the marker, an info window opens that displays Toronto in bolded text.
