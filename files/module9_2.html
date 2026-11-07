@@ -1,145 +1,84 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="utf-8" />
+    <title>Web Cartography Lab: Google Maps & Alpine.js</title>
+    <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
 
-<meta charset=utf-8 />
+    <!-- Tailwind CSS for styling the control panel -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<title>Google Slider Example</title>
-
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
-<!--linking to jQuery and jQuery UI libraries and jQuery UI CSS stylesheet -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-<style>
-
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-    }
-
-    #slider {
-        width:100%;
-    }
-
-    section {
-        position: absolute;
-        right: 10px;
-        width: 800px;
-        margin: 20px auto;
-        padding: 0 15px;
-        background: rgba(256, 256, 256, .8);
-        border: 1px solid grey;
-        border-radius: 3px;
-        z-index: 800;
-    }
-
-    p {
-        font-size: .9em;
-        line-height: 1.5em;
-    }
-
-    @media screen and (max-width:768px) {
-
-        /* These rules are applied for devices where the browser window is smaller than 768px - example: mobile phones */
-        body {
-            overflow: hidden
-        }
-
-        section {
-            width: 85%;
-            bottom:15px;
-            max-height:300px;
-            overflow: auto;
-        }
-    }
-
-</style>
-
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
 </head>
 
-<body>
-    <div id='map'></div>
+<body class="flex flex-col h-screen overflow-hidden" x-data="mapApp()">
 
-    <section>
-    <h2>National Landcover Database, 2016</h2>
-
-    <p>WMS layer diplays National Land Cover Database, from <a href="https://www.mrlc.gov/data-services-page">Multi-Resolution Land Characteristics (MRLC) Consortium
-</a></p>
-
-    <!-- slider-->
-    <div id="slider" >
-        <div class="ui-slider-handle"></div>
+    <!-- Control Panel Powered by Alpine.js -->
+    <div class="absolute top-4 right-4 z-[1000] bg-white/90 backdrop-blur p-4 rounded-lg shadow-lg w-80 space-y-3">
+        <h2 class="font-bold text-gray-800 text-sm">City of Toronto Orthophoto</h2>
+        <p class="text-xs text-gray-600">High-resolution aerial imagery served via ArcGIS MapServer tile endpoint.</p>
+        
+        <div>
+            <label class="block text-xs font-medium text-gray-700 mb-1">
+                Opacity: <span x-text="opacity + '%'"></span>
+            </label>
+            <!-- Reactive binding to update Google Maps tile layer opacity instantly -->
+            <input type="range" min="0" max="100" 
+                   x-model.number="opacity" 
+                   @input="updateOpacity()"
+                   class="w-full accent-blue-600">
+        </div>
     </div>
 
-    <p>Use the slider to adjust the landcover opacity.</p>
-
-    </section>
+    <!-- Map Container -->
+    <div id="map"></div>
 
     <script>
-      var EXTENT = [-Math.PI * 6378137, Math.PI * 6378137];
+        let orthoTileType = null;
 
-      function xyzToBounds(x, y, z) {
-        var tileSize = (EXTENT[1] * 2) / Math.pow(2, z);
-        var minx = EXTENT[0] + x * tileSize;
-        var maxx = EXTENT[0] + (x + 1) * tileSize;
-        // remember y origin starts at top
-        var miny = EXTENT[1] - (y + 1) * tileSize;
-        var maxy = EXTENT[1] - y * tileSize;
-        return [minx, miny, maxx, maxy];
-      }
+        function initMap() {
+            // Initialize Google Map centered on Toronto
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 43.6532, lng: -79.3832 },
+                zoom: 13,
+                mapTypeId: 'roadmap'
+            });
 
-      var getTileUrl = function(coordinates, zoom) {
-        return (
-          "https://www.mrlc.gov/geoserver/NLCD_Land_Cover/wms?" +
-          "&REQUEST=GetMap&SERVICE=WMS&VERSION=1.1.1" +
-          "&LAYERS=mrlc_display%3ANLCD_2016_Land_Cover_L48" +
-          "&FORMAT=image%2Fpng" +
-          "&SRS=EPSG:3857&WIDTH=256&HEIGHT=256" +
-          "&BBOX=" +
-          xyzToBounds(coordinates.x, coordinates.y, zoom).join(",")
-        );
-      };
+            // Create custom ImageMapType for City of Toronto direct tiles
+            orthoTileType = new google.maps.ImageMapType({
+                getTileUrl: function(coord, zoom) {
+                    return `https://gis.toronto.ca/arcgis/rest/services/basemap/cot_ortho_2022_color_8cm/MapServer/tile/${zoom}/${coord.y}/${coord.x}`;
+                },
+                tileSize: new google.maps.Size(256, 256),
+                isPng: true,
+                opacity: 0.5,
+                name: 'Toronto Orthophoto'
+            });
 
-      function initMap() {
-      
-        var map = new google.maps.Map(document.getElementById("map"), {
-          center: {lat: 43.652526, lng: -79.382674},
-          zoom: 3
+            // Push tile layer into Google Maps overlay stack
+            map.overlayMapTypes.push(orthoTileType);
+        }
+
+        // Alpine.js application state for global scope synchronization
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('mapApp', () => ({
+                opacity: 50,
+                updateOpacity() {
+                    if (orthoTileType) {
+                        orthoTileType.setOpacity(this.opacity / 100);
+                    }
+                }
+            }));
         });
-
-        var landcover = new google.maps.ImageMapType({
-          getTileUrl: getTileUrl,
-          name: "Landcover",
-          alt: "National Land Cover Database 2016",
-          minZoom: 0,
-          maxZoom: 19,
-          opacity: 0.5,
-        });
-        map.overlayMapTypes.push(landcover);
-        $("#slider").slider({
-          value: 50,
-          slide: function(e, ui)
-          {
-            landcover.setOpacity(ui.value / 100);
-          }
-        });
-      }
-
     </script>
 
-    <!-- Linking to the Google Maps API -->
-    <script async="" defer="" src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+    <!-- Linking to the Google Maps API with callback -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
 </body>
 </html>
