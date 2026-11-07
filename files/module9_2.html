@@ -5,7 +5,7 @@
     <title>Web Cartography Lab: Google Maps & Alpine.js</title>
     <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
 
-    <!-- Alpine.js loaded in <head> with 'defer' to ensure it initializes after DOM is parsed -->
+    <!-- Alpine.js loaded in <head> with 'defer' -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -25,18 +25,11 @@
     </style>
 </head>
 
-<!-- x-data initializes the reactive component scope for this element and its children -->
 <body x-data="mapApp()">
 
     <!-- Control Panel -->
     <div class="control-panel">
-        <!-- x-text dynamically binds the span text content to the JS 'opacity' variable -->
         <label>Opacity: <span x-text="opacity + '%'"></span></label>
-        
-        <!-- 
-          - x-model.number: Two-way data binding; keeps input value synced to JS state as a number.
-          - @input: Event listener shorthand; triggers updateOpacity() on every slider tick.
-        -->
         <input type="range" min="0" max="100" 
                x-model.number="opacity" 
                @input="updateOpacity()" style="width: 100%;">
@@ -46,46 +39,50 @@
     <div id="map"></div>
 
     <script>
-        let orthoTileType = null; // Global reference for the map overlay type
-
+        // Global callback triggered automatically once Google Maps API finishes loading
         function initMap() {
-            // Initialize Google Map centered on Toronto
-            const map = new google.maps.Map(document.getElementById("map"), {
-                center: { lat: 43.6532, lng: -79.3832 },
-                zoom: 13,
-                mapTypeId: 'roadmap'
-            });
-
-            // Create custom ImageMapType using coordinate callback for direct tiles
-            orthoTileType = new google.maps.ImageMapType({
-                getTileUrl: function(coord, zoom) {
-                    return `https://gis.toronto.ca/arcgis/rest/services/basemap/cot_ortho_2022_color_8cm/MapServer/tile/${zoom}/${coord.y}/${coord.x}`;
-                },
-                tileSize: new google.maps.Size(256, 256),
-                isPng: true,
-                opacity: 0.5,
-                name: 'Toronto Orthophoto'
-            });
-
-            // Push tile layer into Google Maps overlay stack
-            map.overlayMapTypes.push(orthoTileType);
+            window.dispatchEvent(new CustomEvent('gmaps-loaded'));
         }
 
-        // Alpine.js component state
         document.addEventListener('alpine:init', () => {
             Alpine.data('mapApp', () => ({
-                opacity: 50, // Initial state variable matching range default
+                opacity: 50,
+                map: null,
+                orthoLayer: null,
+
+                init() {
+                    // Listen for the Google Maps API ready event before building the map
+                    window.addEventListener('gmaps-loaded', () => {
+                        this.map = new google.maps.Map(document.getElementById("map"), {
+                            center: { lat: 43.6532, lng: -79.3832 },
+                            zoom: 13,
+                            mapTypeId: 'roadmap'
+                        });
+
+                        this.orthoLayer = new google.maps.ImageMapType({
+                            getTileUrl: function(coord, zoom) {
+                                return `https://gis.toronto.ca/arcgis/rest/services/basemap/cot_ortho_2022_color_8cm/MapServer/tile/${zoom}/${coord.y}/${coord.x}`;
+                            },
+                            tileSize: new google.maps.Size(256, 256),
+                            isPng: true,
+                            opacity: this.opacity / 100,
+                            name: 'Toronto Orthophoto'
+                        });
+
+                        this.map.overlayMapTypes.push(this.orthoLayer);
+                    });
+                },
+
                 updateOpacity() {
-                    // Update Google Maps overlay opacity whenever Alpine state changes
-                    if (orthoTileType) {
-                        orthoTileType.setOpacity(this.opacity / 100);
+                    if (this.orthoLayer) {
+                        this.orthoLayer.setOpacity(this.opacity / 100);
                     }
                 }
             }));
         });
     </script>
 
-    <!-- Google Maps API loaded at bottom with callback to initMap -->
+    <!-- Google Maps API loaded with initialization callback -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
 </body>
 </html>
