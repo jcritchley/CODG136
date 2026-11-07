@@ -1,108 +1,88 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<meta charset=utf-8 />
-<title>Leaflet Slider Example</title>
-
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-
-    <!--Link to Leaflet CSS document-->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-    <!--Linking to Alpine.js via CDN-->
+    <meta charset="UTF-8">
+    <title>Web Cartography Lab: Leaflet & Alpine.js</title>
+    
+    <!-- Leaflet CSS loaded in <head> so the map container styles render instantly -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Alpine.js loaded in <head> with 'defer' to ensure it initializes after DOM is parsed -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-<style>
-
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-    }
-
-    #slider {
-        width: 100%;
-        margin: 10px 0;
-    }
-
-    section {
-        position: absolute;
-        right: 10px;
-        width: 400px;
-        margin: 20px auto;
-        padding: 0 15px;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid grey;
-        border-radius: 3px;
-        z-index: 800;
-    }
-
-    p {
-        font-size: .9em;
-        line-height: 1.5em;
-    }
-
-    @media screen and (max-width:768px) {
-        body {
-            overflow: hidden
+    <style>
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        #map { height: 100vh; width: 100vw; }
+        
+        .control-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-
-        section {
-            width: 85%;
-            bottom: 15px;
-            max-height: 300px;
-            overflow: auto;
-        }
-    }
-
-</style>
-
+    </style>
 </head>
 
-<body>
-    <div id='map'></div>
+<!-- x-data initializes the reactive component scope for this element and its children -->
+<body x-data="mapApp()">
 
-    <!-- Alpine.js component container tracking opacity state -->
-    <section x-data="{ opacity: 50 }">
-        <h2>City of Toronto - Orthorectified Aerial Imagery</h2>
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <!-- x-text dynamically binds the span text content to the JS 'opacity' variable -->
+        <label>Opacity: <span x-text="opacity + '%'"></span></label>
+        
+        <!-- 
+          - x-model.number: Two-way data binding; keeps input value synced to JS state as a number.
+          - @input: Event listener shorthand (v-on:input); triggers updateOpacity() on every slider tick.
+        -->
+        <input type="range" min="0" max="100" 
+               x-model.number="opacity" 
+               @input="updateOpacity()" style="width: 100%;">
+    </div>
 
-        <p>WMS layer displays Orthorectified Aerial Imagery for the City of Toronto, from <a href="https://open.toronto.ca/dataset/web-map-services/">the City of Toronto Open Data portal</a>.</p>
+    <!-- Map Container -->
+    <div id="map"></div>
 
-        <!-- Native range slider bound to Alpine state -->
-        <input id="slider" type="range" min="0" max="100" x-model="opacity" @input="satellite.setOpacity(opacity / 100)">
-
-        <p>Use the slider to adjust the satellite imagery opacity. Current opacity: <span x-text="opacity"></span>%</p>
-    </section>
+    <!-- Leaflet JS loaded at bottom of body so the #map DOM element exists when initialized -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('mapApp', () => ({
+                opacity: 50, // Initial state variable matching the range input default
+                map: null,
+                orthoLayer: null,
 
-        var map = L.map('map', {
-            center: [43.652526, -79.382674],
-            zoom: 13
+                init() {
+                    // Initialize Leaflet Map centered on Toronto
+                    this.map = L.map('map').setView([43.6532, -79.3832], 13);
+
+                    // Add OpenStreetMap France raster basemap
+                    L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                        maxZoom: 20,
+                        attribution: '&copy; OpenStreetMap France'
+                    }).addTo(this.map);
+
+                    // Add City of Toronto 2022 Orthophoto tile layer using initial opacity state
+                    this.orthoLayer = L.tileLayer('https://gis.toronto.ca/arcgis/rest/services/basemap/cot_ortho_2022_color_8cm/MapServer/tile/{z}/{y}/{x}', {
+                        maxZoom: 20,
+                        opacity: this.opacity / 100,
+                        attribution: '&copy; City of Toronto GIS'
+                    }).addTo(this.map);
+                },
+
+                updateOpacity() {
+                    // Update Leaflet layer opacity whenever the Alpine state changes
+                    if (this.orthoLayer) {
+                        this.orthoLayer.setOpacity(this.opacity / 100);
+                    }
+                }
+            }));
         });
-          
-        // Free community OSM raster tiles 
-        L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
-            maxZoom: 20,
-            attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-		// Direct ArcGIS MapServer tile layer for Toronto orthophotos
-        var satellite = L.tileLayer('https://gis.toronto.ca/arcgis/rest/services/basemap/cot_ortho_2022_color_8cm/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 20,
-            opacity: 0.5,
-            attribution: '&copy; City of Toronto GIS'
-        }).addTo(map);
-		
     </script>
 </body>
 </html>

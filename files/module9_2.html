@@ -5,42 +5,48 @@
     <title>Web Cartography Lab: Google Maps & Alpine.js</title>
     <meta name='viewport' content='initial-scale=1, maximum-scale=1, user-scalable=no' />
 
-    <!-- Tailwind CSS for styling the control panel -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Alpine.js -->
+    <!-- Alpine.js loaded in <head> with 'defer' to ensure it initializes after DOM is parsed -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
-        body { margin: 0; padding: 0; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        #map { height: 100vh; width: 100vw; }
+        
+        .control-panel {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 
-<body class="flex flex-col h-screen overflow-hidden" x-data="mapApp()">
+<!-- x-data initializes the reactive component scope for this element and its children -->
+<body x-data="mapApp()">
 
-    <!-- Control Panel Powered by Alpine.js -->
-    <div class="absolute top-4 right-4 z-[1000] bg-white/90 backdrop-blur p-4 rounded-lg shadow-lg w-80 space-y-3">
-        <h2 class="font-bold text-gray-800 text-sm">City of Toronto Orthophoto</h2>
-        <p class="text-xs text-gray-600">High-resolution aerial imagery served via ArcGIS MapServer tile endpoint.</p>
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <!-- x-text dynamically binds the span text content to the JS 'opacity' variable -->
+        <label>Opacity: <span x-text="opacity + '%'"></span></label>
         
-        <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">
-                Opacity: <span x-text="opacity + '%'"></span>
-            </label>
-            <!-- Reactive binding to update Google Maps tile layer opacity instantly -->
-            <input type="range" min="0" max="100" 
-                   x-model.number="opacity" 
-                   @input="updateOpacity()"
-                   class="w-full accent-blue-600">
-        </div>
+        <!-- 
+          - x-model.number: Two-way data binding; keeps input value synced to JS state as a number.
+          - @input: Event listener shorthand; triggers updateOpacity() on every slider tick.
+        -->
+        <input type="range" min="0" max="100" 
+               x-model.number="opacity" 
+               @input="updateOpacity()" style="width: 100%;">
     </div>
 
     <!-- Map Container -->
     <div id="map"></div>
 
     <script>
-        let orthoTileType = null;
+        let orthoTileType = null; // Global reference for the map overlay type
 
         function initMap() {
             // Initialize Google Map centered on Toronto
@@ -50,7 +56,7 @@
                 mapTypeId: 'roadmap'
             });
 
-            // Create custom ImageMapType for City of Toronto direct tiles
+            // Create custom ImageMapType using coordinate callback for direct tiles
             orthoTileType = new google.maps.ImageMapType({
                 getTileUrl: function(coord, zoom) {
                     return `https://gis.toronto.ca/arcgis/rest/services/basemap/cot_ortho_2022_color_8cm/MapServer/tile/${zoom}/${coord.y}/${coord.x}`;
@@ -65,11 +71,12 @@
             map.overlayMapTypes.push(orthoTileType);
         }
 
-        // Alpine.js application state for global scope synchronization
+        // Alpine.js component state
         document.addEventListener('alpine:init', () => {
             Alpine.data('mapApp', () => ({
-                opacity: 50,
+                opacity: 50, // Initial state variable matching range default
                 updateOpacity() {
+                    // Update Google Maps overlay opacity whenever Alpine state changes
                     if (orthoTileType) {
                         orthoTileType.setOpacity(this.opacity / 100);
                     }
@@ -78,7 +85,7 @@
         });
     </script>
 
-    <!-- Linking to the Google Maps API with callback -->
+    <!-- Google Maps API loaded at bottom with callback to initMap -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
 </body>
 </html>
